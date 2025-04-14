@@ -7,27 +7,26 @@ import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { ModalContext } from '../../../provider/connect-wallet/wallet-provider';
 import { createNft } from '@metaplex-foundation/mpl-token-metadata'
 import { percentAmount } from '@metaplex-foundation/umi';
-import { CheckCircleIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
-import { ArrowTopRightOnSquareIcon as ExternalLinkIcon } from '@heroicons/react/24/solid';
-import './create-collection.css';
+import { CheckCircleIcon, ExternalLinkIcon } from '@heroicons/react/solid';
+import './create-merkleTree.css';
 
-interface CreateCollectionResult {
+interface CreateMerkleTreeResult {
   mint: string;
   signature: string;
 }
 
-export default function CreateCollection({ onCollectionCreated }: { onCollectionCreated?: (collectionMint: string) => void }) {
+export function CreateMerkleTree({ onMerkleTreeCreated }: { onMerkleTreeCreated?: (collectionMint: string) => void }) {
   const { connection } = useConnection();
   const { publicKey, connected, wallet, signTransaction, signAllTransactions } = useWallet();
   const { switchToNextEndpoint, endpoint } = useContext(ModalContext);
   
-  const [name, setName] = useState('');
-  const [uri, setUri] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState<CreateCollectionResult | null>(null);
+  const [result, setResult] = useState<CreateMerkleTreeResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [network, setNetwork] = useState('devnet');
+  const [network, setNetwork] = useState(endpoint?.includes('devnet') ? 'devnet' : 'mainnet');
+  const [maxDepth, setMaxDepth] = useState('14');
+  const [maxBuffer, setMaxBuffer] = useState('64');
 
   // Only render after the component is mounted on the client
   useEffect(() => {
@@ -36,9 +35,7 @@ export default function CreateCollection({ onCollectionCreated }: { onCollection
 
   // Update network state when endpoint changes
   useEffect(() => {
-    if (endpoint) {
-      setNetwork(endpoint.includes('devnet') ? 'devnet' : 'mainnet');
-    }
+    setNetwork(endpoint?.includes('devnet') ? 'devnet' : 'mainnet');
   }, [endpoint]);
 
   const validateURI = (uri: string) => {
@@ -51,19 +48,24 @@ export default function CreateCollection({ onCollectionCreated }: { onCollection
     }
   };
 
-  const handleCreateCollection = async () => {
+  const handleCreateMerkleTree = async () => {
     if (!connected || !publicKey || !wallet) {
       setError('Please connect your wallet');
       return;
     }
 
-    if (!name || !uri) {
-      setError('Please enter a name and metadata URI');
+    if (!maxDepth || !maxBuffer) {
+      setError('Please enter max depth and buffer size');
       return;
     }
 
-    if (!validateURI(uri)) {
-      setError('Invalid URI. Please enter a full URI including https://');
+    if (parseInt(maxDepth) < 1 || parseInt(maxDepth) > 30) {
+      setError('Max depth must be between 1 and 30');
+      return;
+    }
+
+    if (parseInt(maxBuffer) < 1) {
+      setError('Max buffer size must be greater than 0');
       return;
     }
 
@@ -83,12 +85,14 @@ export default function CreateCollection({ onCollectionCreated }: { onCollection
         { createUmi },
         { walletAdapterIdentity },
         { mplTokenMetadata },
-        { generateSigner }
+        { generateSigner },
+        { createTree }
       ] = await Promise.all([
         import('@metaplex-foundation/umi-bundle-defaults'),
         import('@metaplex-foundation/umi-signer-wallet-adapters'),
         import('@metaplex-foundation/mpl-token-metadata'),
-        import('@metaplex-foundation/umi')
+        import('@metaplex-foundation/umi'),
+        import('@metaplex-foundation/mpl-bubblegum')
       ]);
 
       // Create UMI instance with all necessary modules
@@ -96,17 +100,13 @@ export default function CreateCollection({ onCollectionCreated }: { onCollection
         .use(walletAdapterIdentity(walletAdapter))
         .use(mplTokenMetadata());
       
-      // Create signer for collection mint
-      const collectionMint = generateSigner(umi);
-      
-      // Create collection NFT
-      const result = await createNft(umi, {
-        mint: collectionMint,
-        name,
-        uri,
-        sellerFeeBasisPoints: percentAmount(5.5), // 5.5%
-        isCollection: true,
-      }).sendAndConfirm(umi);
+        const merkleTree = generateSigner(umi)
+        const builder = await createTree(umi, {
+          merkleTree,
+          maxDepth: parseInt(maxDepth),
+          maxBufferSize: parseInt(maxBuffer),
+        })
+        const result = await builder.sendAndConfirm(umi)
       
       // Convert signature to string format
       const signatureStr = typeof result.signature === 'string' 
@@ -114,23 +114,21 @@ export default function CreateCollection({ onCollectionCreated }: { onCollection
         : Buffer.from(result.signature).toString('base64');
       
       // Convert mint address to string
-      const mintAddressStr = collectionMint.publicKey.toString();
+      const merkleTreeAddressStr = merkleTree.publicKey.toString();
       
       // Save result
       setResult({
-        mint: mintAddressStr,
+        mint: merkleTreeAddressStr,
         signature: signatureStr
       });
       
       // Call callback if provided
-      if (onCollectionCreated) {
-        onCollectionCreated(mintAddressStr);
+      if (onMerkleTreeCreated) {
+        onMerkleTreeCreated(merkleTreeAddressStr);
       }
       
-      setName('');
-      setUri('');
     } catch (err: any) {
-      console.error("Create Collection error:", err);
+      console.error("Create Merkle Tree error:", err);
       setError(err.message);
       
       // If transaction fails due to connection error, try switching to another endpoint
@@ -145,11 +143,6 @@ export default function CreateCollection({ onCollectionCreated }: { onCollection
     }
   };
 
-  // Clear error when input changes
-  useEffect(() => {
-    if (error) setError(null);
-  }, [name, uri]);
-
   const viewExplorer = () => {
     if (result?.signature) {
       const baseUrl = network === 'devnet' ? 'https://explorer.solana.com/tx/' : 'https://solscan.io/tx/';
@@ -157,7 +150,7 @@ export default function CreateCollection({ onCollectionCreated }: { onCollection
     }
   };
 
-  const viewCollection = () => {
+  const viewMerkleTree = () => {
     if (result?.mint) {
       const baseUrl = network === 'devnet' ? 'https://explorer.solana.com/address/' : 'https://solscan.io/token/';
       window.open(`${baseUrl}${result.mint}${network === 'devnet' ? '?cluster=devnet' : ''}`, '_blank');
@@ -166,18 +159,18 @@ export default function CreateCollection({ onCollectionCreated }: { onCollection
 
   // Reset form
   const resetForm = () => {
-    setName('');
-    setUri('');
+    setMaxDepth('14');
+    setMaxBuffer('64');
     setResult(null);
     setError(null);
   };
 
   // Avoid hydration error
   if (!mounted) {
-    return <div className="create-collection-container">
-      <div className="create-collection-header">
-        <h2>Create Collection</h2>
-        <p className="create-collection-description">Create a new NFT collection on Solana</p>
+    return <div className="create-merkle-tree-container">
+      <div className="create-merkle-tree-header">
+        <h2>Create Merkle Tree</h2>
+        <p className="create-merkle-tree-description">Create a new Merkle Tree on Solana</p>
       </div>
       <div className="loader">
         <div className="loader-spinner"></div>
@@ -187,10 +180,10 @@ export default function CreateCollection({ onCollectionCreated }: { onCollection
   }
 
   return (
-    <div className="create-collection-container">
-      <div className="create-collection-header">
-        <h2>Create Collection</h2>
-        <p className="create-collection-description">Create a new NFT collection on Solana</p>
+    <div className="create-merkle-tree-container">
+      <div className="create-merkle-tree-header">
+        <h2>Create Merkle Tree</h2>
+        <p className="create-merkle-tree-description">Create a new Merkle Tree on Solana</p>
       </div>
       
       {connected && publicKey && (
@@ -207,17 +200,17 @@ export default function CreateCollection({ onCollectionCreated }: { onCollection
       {!connected ? (
         <div className="wallet-connect-container">
           <WalletMultiButton />
-          <p className="input-help">Connect wallet to create collection</p>
+          <p className="input-help">Connect wallet to create merkle tree</p>
         </div>
       ) : result ? (
         <div className="success-message">
           <div className="success-heading">
             <CheckCircleIcon width={20} height={20} />
-            <span>Collection created successfully!</span>
+            <span>Merkle Tree created successfully!</span>
           </div>
           
           <div>
-            <p>Collection Mint:</p>
+            <p>Merkle Tree Mint:</p>
             <div className="success-details">{result.mint}</div>
           </div>
           
@@ -228,11 +221,11 @@ export default function CreateCollection({ onCollectionCreated }: { onCollection
           
           <div className="action-buttons">
             <button 
-              onClick={viewCollection}
-              className="action-button view-collection-button"
+              onClick={viewMerkleTree}
+              className="action-button view-merkle-tree-button"
             >
               <ExternalLinkIcon width={16} height={16} />
-              View Collection
+              View Merkle Tree
             </button>
             
             <button 
@@ -249,54 +242,58 @@ export default function CreateCollection({ onCollectionCreated }: { onCollection
             className="create-button"
             style={{ marginTop: '16px' }}
           >
-            Create New Collection
+            Create New Merkle Tree
           </button>
         </div>
       ) : (
         <>
-          <div className="collection-card">
+          <div className="merkle-tree-card">
+            
             <div className="input-group">
               <div className="input-label">
-                <label htmlFor="collection-name">Collection Name</label>
+                <label htmlFor="max-depth">Max Depth</label>
               </div>
               <div className="input-container">
                 <input
-                  id="collection-name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  id="max-depth"
+                  type="number"
+                  value={maxDepth}
+                  onChange={(e) => setMaxDepth(e.target.value)}
                   className="collection-input"
-                  placeholder="My Awesome Collection"
+                  placeholder="14"
+                  min="1"
+                  max="30"
                   required
                 />
               </div>
-              <p className="input-help">Enter a name for your NFT collection</p>
+              <p className="input-help">Maximum depth of the Merkle tree (recommended: 14-20)</p>
             </div>
             
             <div className="input-group">
               <div className="input-label">
-                <label htmlFor="metadata-uri">Metadata URI</label>
+                <label htmlFor="max-buffer">Max Buffer Size</label>
               </div>
               <div className="input-container">
                 <input
-                  id="metadata-uri"
-                  type="text"
-                  value={uri}
-                  onChange={(e) => setUri(e.target.value)}
-                  className="collection-input"
-                  placeholder="https://example.com/my-collection.json"
+                  id="max-buffer"
+                  type="number"
+                  value={maxBuffer}
+                  onChange={(e) => setMaxBuffer(e.target.value)}
+                  className="merkle-tree-input"
+                  placeholder="64"
+                  min="1"
                   required
                 />
               </div>
-              <p className="input-help">URI to JSON metadata following Metaplex standard</p>
+              <p className="input-help">Maximum buffer size for concurrent operations (recommended: 64-256)</p>
             </div>
             
             <button
-              onClick={handleCreateCollection}
-              disabled={isLoading || !name || !uri}
+              onClick={handleCreateMerkleTree}
+              disabled={isLoading || !maxDepth || !maxBuffer}
               className={`create-button ${isLoading ? 'loading' : ''}`}
             >
-              {isLoading ? 'Creating...' : 'Create Collection'}
+              {isLoading ? 'Creating...' : 'Create Merkle Tree'}
             </button>
           </div>
         </>

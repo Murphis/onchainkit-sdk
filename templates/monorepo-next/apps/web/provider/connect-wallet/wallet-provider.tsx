@@ -50,10 +50,10 @@ export const WalletProvider = ({ children, ...props }: WalletProviderProps) => {
   
   // List of public RPC endpoints
   const publicRPCs = useMemo(() => [
-    "https://solana-mainnet.g.alchemy.com/v2/fc0topeseIhDXBFfSMhpvcfyqDB8hXyn",
+    "https://api.devnet.solana.com",
   ], []);
   
-  const defaultNetwork = useMemo(() => props.network || "mainnet-beta", [props.network]);
+  const defaultNetwork = useMemo(() => props.network || "devnet", [props.network]);
   
   // Provided endpoint will be prioritized, otherwise use the current endpoint from the list
   const endpoint = useMemo(() => {

@@ -23,7 +23,7 @@
   padding: 0 20px;
 }
 
-.swap-wrapper, .stake-wrapper, .create-collection-wrapper, .mint-nft-wrapper, .get-nft-wrapper {
+.swap-wrapper, .stake-wrapper, .create-collection-wrapper, .create-merkle-tree-wrapper, .mint-nft-wrapper, .get-nft-wrapper, .mint-cnft-wrapper {
   width: 100%;
   max-width: 480px;
   display: flex;

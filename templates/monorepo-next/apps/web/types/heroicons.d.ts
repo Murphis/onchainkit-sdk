@@ -1,6 +1,5 @@
 declare module '@heroicons/react/solid' {
-  import { ComponentType, SVGProps } from 'react';
-  
-  export const CheckCircleIcon: ComponentType<SVGProps<SVGSVGElement>>;
-  export const ExternalLinkIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  import { FC, SVGProps } from 'react';
+  export const CheckCircleIcon: FC<SVGProps<SVGSVGElement>>;
+  export const ExternalLinkIcon: FC<SVGProps<SVGSVGElement>>;
 } 

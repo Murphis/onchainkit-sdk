@@ -9,5 +9,8 @@
   },
   "devDependencies": {
     "turbo": "^1.10.0"
+  },
+  "dependencies": {
+    "@heroicons/react": "1.0.6"
   }
 }

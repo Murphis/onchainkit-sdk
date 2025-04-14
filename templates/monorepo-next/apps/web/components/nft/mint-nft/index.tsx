@@ -14,9 +14,6 @@ import { walletAdapterIdentity } from '@metaplex-foundation/umi-signer-wallet-ad
 import { mplTokenMetadata } from '@metaplex-foundation/mpl-token-metadata';
 import './mint-nft.css';
 
-// Declare module for heroicons
-declare module '@heroicons/react/solid';
-
 export interface MintNFTProps {
   collectionMint?: string;
   rpcUrl?: string;
