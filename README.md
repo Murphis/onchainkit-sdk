@@ -1,17 +1,17 @@
-# OnchainKit SDK
+# Murphis
 
-OnchainKit SDK is a toolkit that helps you add components and utilities to your project. This SDK allows you to quickly and easily copy and paste files into your project.
+Murphis is a toolkit that helps you add components and utilities to your project. This SDK allows you to quickly and easily copy and paste files into your project.
 
 ## Installation
 
 ```bash
-npm install -g onchainkit-sdk
+npm install -g @murphis/onchainkit-sdk
 ```
 
 or
 
 ```bash
-yarn global add onchainkit-sdk
+yarn global add @murphis/onchainkit-sdk
 ```
 
 ## Usage
@@ -19,19 +19,19 @@ yarn global add onchainkit-sdk
 ### List all available components
 
 ```bash
-onchainkit list
+murphis list
 ```
 
 ### Add a feature to your project
 
 ```bash
-onchainkit add connect-wallet
+murphis add connect-wallet
 ```
 
-### Remove a feauture from your project
+### Remove a feature from your project
 
 ```bash
-onchainkit remove connect-wallet
+murphis remove connect-wallet
 ```
 
 ## Contribution

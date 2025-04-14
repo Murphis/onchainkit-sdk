@@ -66,7 +66,7 @@ export default function Home() {
             <CreateMerkleTree />
           </div>
           <div className="mint-nft-wrapper">
-            {/* <MintNFT collectionMint={collectionMint} /> */}
+            <MintNFT collectionMint={collectionMint} />
           </div>
           <div className="mint-cnft-wrapper">
             <MintCNFT collectionMint={collectionMint} />

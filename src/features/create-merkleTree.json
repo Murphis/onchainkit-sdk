@@ -10,16 +10,16 @@
     "@solana/web3.js",
     "@solana/wallet-adapter-base",
     "@solana/wallet-adapter-react-ui/styles.css",
-    "@solana/wallet-adapter-wallets"
+    "@solana/wallet-adapter-wallets",
+    "@solana/spl-token",
+    "@metaplex-foundation/mpl-token-metadata",
+    "@metaplex-foundation/umi",
+    "@heroicons/react/solid"
   ],
   "files": [
     {
-      "source": "source/components/stake",
-      "target": "components/stake"
-    },
-    {
-      "source": "source/api",
-      "target": "app/api"
+      "source": "source/components/nft/create-merkleTree",
+      "target": "components/nft/create-merkleTree"
     }
   ]
 }

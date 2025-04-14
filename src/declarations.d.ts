@@ -14,6 +14,7 @@ declare module '@solana/wallet-adapter-react' {
   export const WalletProvider: any;
   export type WalletContextState = any;
   export type ConnectionProviderProps = any;
+  export const useConnection: any;
 }
 
 declare module '@solana/wallet-adapter-base' {
@@ -92,8 +93,58 @@ declare global {
 }
 
 // Add path aliases
-declare module '@onchainkit/source/*' {
-  export * from '../source/*';
+declare module '@murphis/source/*' {
+  const content: any;
+  export default content;
+}
+
+declare module '@metaplex-foundation/mpl-token-metadata' {
+  export const createNft: any;
+  export const mintToCollectionV1: any;
+  export const mplTokenMetadata: any;
+  export const findMetadataPda: any;
+}
+
+declare module '@metaplex-foundation/umi' {
+  export const generateSigner: any;
+  export const none: any;
+  export const percentAmount: any;
+  export const publicKey: any;
+}
+
+declare module '@metaplex-foundation/umi-bundle-defaults' {
+  export const createUmi: any;
+}
+
+declare module '@metaplex-foundation/mpl-core' {
+  export const create: any;
+  export const fetchCollection: any;
+  export const mplCore: any;
+}
+
+declare module '@metaplex-foundation/umi-web3js-adapters' {
+  export const fromWeb3JsPublicKey: any;
+  export const toWeb3JsPublicKey: any;
+}
+
+declare module '@metaplex-foundation/umi-signer-wallet-adapters' {
+  export const walletAdapterIdentity: any;
+}
+
+declare module '@metaplex-foundation/umi-bundle-defaults' {
+  export const createUmi: any;
+}
+
+declare module '@metaplex-foundation/mpl-bubblegum' {
+  export const mplBubblegum: any;
+  export const MetadataArgsArgs: any;
+  export const mintToCollectionV1: any;
+  export const createTree: any;
+}
+
+declare module '@heroicons/react/24/solid' {
+  export const CheckCircleIcon: any;
+  export const ArrowTopRightOnSquareIcon: any;
 }
 
 /**

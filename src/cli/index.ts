@@ -13,7 +13,7 @@ const program = new Command();
 // Define the version of the CLI
 program
   .version('0.1.0')
-  .description('OnchainKit SDK - Add components and utilities to your project');
+  .description('Murphis - Add components and utilities to your project');
 
 // Function to load feature configuration
 async function loadFeatureConfig(featureName: string): Promise<FeatureConfig> {

@@ -1,10 +1,10 @@
 {
-  "name": "onchainkit-sdk",
+  "name": "@murphis/onchainkit-sdk",
   "version": "0.1.0",
-  "description": "OnchainKit SDK",
+  "description": "Murphy - Tool for creating and managing components in your project",
   "main": "dist/index.js",
   "bin": {
-    "onchainkit": "./dist/cli/index.js"
+    "murphis": "./dist/cli/index.js"
   },
   "scripts": {
     "build": "ts-node scripts/build.ts",
@@ -14,13 +14,24 @@
     "test": "jest"
   },
   "keywords": [
+    "murphy",
     "sdk",
     "components",
     "utilities",
-    "copy-paste"
+    "toolkit",
+    "cli",
+    "template"
   ],
-  "author": "",
+  "author": "SaitamaCoder",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Murphis/onchainkit-sdk.git"
+  },
+  "homepage": "https://github.com/Murphis/onchainkit-sdk",
+  "bugs": {
+    "url": "https://github.com/Murphis/onchainkit-sdk/issues"
+  },
   "dependencies": {
     "chalk": "^4.1.2",
     "commander": "^9.4.1",
@@ -40,5 +51,10 @@
     "ts-jest": "^29.2.6",
     "ts-node": "^10.9.2",
     "typescript": "^4.9.4"
-  }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }

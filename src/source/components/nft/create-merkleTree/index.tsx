@@ -5,6 +5,8 @@ import { PublicKey } from '@solana/web3.js';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { ModalContext } from '../../../provider/connect-wallet/wallet-provider';
+import { createNft } from '@metaplex-foundation/mpl-token-metadata'
+import { percentAmount } from '@metaplex-foundation/umi';
 import { CheckCircleIcon, ExternalLinkIcon } from '@heroicons/react/solid';
 import './create-merkleTree.css';
 

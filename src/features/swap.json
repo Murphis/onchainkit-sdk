@@ -6,7 +6,12 @@
     "@solana/wallet-adapter-react-ui",
     "class-variance-authority",
     "clsx",
-    "tailwind-merge"
+    "tailwind-merge",
+    "@solana/web3.js",
+    "@solana/wallet-adapter-base",
+    "@solana/wallet-adapter-react-ui/styles.css",
+    "@solana/wallet-adapter-wallets",
+    "@solana/spl-token",
   ],
   "files": [
     {

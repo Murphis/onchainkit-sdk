@@ -1,0 +1,21 @@
+{
+  "name": "stake",
+  "description": "Solana stake components and utilities",
+  "dependencies": [
+    "@solana/wallet-adapter-react",
+    "@solana/wallet-adapter-react-ui",
+    "class-variance-authority",
+    "clsx",
+    "tailwind-merge",
+    "@metaplex-foundation/mpl-token-metadata",
+    "@metaplex-foundation/umi",
+    "@metaplex-foundation/mpl-bubblegum",
+    "@heroicons/react/24/solid"
+  ],
+  "files": [
+    {
+      "source": "source/components/nft/create-collection",
+      "target": "components/nft/create-collection"
+    }
+  ]
+}
